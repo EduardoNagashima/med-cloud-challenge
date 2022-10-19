@@ -1,10 +1,10 @@
 import Container from "../components/Container";
 import Navbar from "../components/Navbar";
-export default function Home(){
+export default function About(){
 
     return (
         <Container>
-            <Navbar select={'Home'}/>
+            <Navbar select={'Sobre'}/>
         </Container>
     );
 }
