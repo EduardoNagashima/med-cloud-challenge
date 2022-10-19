@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700&family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500&family=Manrope:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
-* {
+z * {
     font-family: 'Roboto', sans-serif;
     box-sizing: border-box;
     transition: .2s;
