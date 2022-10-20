@@ -20,5 +20,5 @@ const TitleName = styled.h1`
     font-size: 72px;
     color: #ffffff;
     font-family: 'Manrope', sans-serif;
-
+    margin-bottom: 80px;
 `;

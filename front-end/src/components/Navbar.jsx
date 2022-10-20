@@ -16,19 +16,19 @@ export default function Navbar({select}) {
 
 const NavbarDiv = styled('div')`
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-around;
     width: 1000px;
-    margin-top: -50px;
-    gap: 2px;
+    margin-top: -70px;
+    gap: 1px;
 `;
 
 const LinkTo = styled(Link)`
     text-decoration: none;
     width: 100%;
-    height: ${(props)=> props.select ? '50px' : '40px' };
+    height: ${(props)=> props.select ? '60px' : '50px' };
     display: flex;
-    border-radius: 0px 100px 0 0;
+    border-radius: 0px 50px 0 0;
     align-items: center;
     justify-content: center;
     background-color: ${(props)=> props.select ? '#08316A' : '#154E9C' };

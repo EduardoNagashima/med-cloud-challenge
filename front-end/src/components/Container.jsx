@@ -12,14 +12,13 @@ export default function Container(props){
 }
 
 const ContainerSection = styled(Box)`
-    border-top: 5px solid #08316A;
-    border-radius: 0px 0px 10px 10px;
+    width: 1300px;
+    min-height: 700px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    width: 1200px;
-    height: auto;
-    min-height: 650px;
+    border-top: 10px solid #08316A;
+    border-radius: 0px 10px 10px 10px;
     background: rgb(255,255,255);
     background: linear-gradient(180deg, rgba(255,255,255,1) 0%, 
     rgba(245,245,245,1) 100%);

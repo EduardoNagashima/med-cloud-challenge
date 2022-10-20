@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react/react-in-jsx-scope */
 import {styled} from '@mui/material/styles';
-import {TextField, Button, Divider, Select, MenuItem, Alert, AlertTitle} from '@mui/material';
+import {TextField, Button, Divider, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DataPicker from '../components/DataPicker';
@@ -12,33 +12,29 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 
 export default function Register() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [uf, setUf] = useState('');
+  const [patientInfo, setPatientInfo] = useState({name: '', email: ''});
+  const [birthdate, setBirthdate] = useState('01/01/2000');
+  const [adress, setAdress] = useState({uf: '', street: '', neighborhood: ''});
   const [zipCode, setZipCode] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
-  const [neighborhood, setNeighborhood] = useState('');
   const [ufInfos, setUfInfo] = useState([]);
 
   const handleChange = (event) => {
-    setUf(event.target.value);
+    setAdress({...adress, uf: event.target.value});
   };
 
   const findZip = (e) => {
     e.preventDefault();
-    setZipCode(e.target.value);
     if (zipCode.length === 8) {
       setLoading(true);
       axios.get(`https://viacep.com.br/ws/${zipCode}/json/`)
           .then((res)=>{
-            const {uf, logradouro, localidade, bairro} = res.data;
-            setUf(uf);
-            setCity(localidade);
-            setStreet(logradouro);
-            setNeighborhood(bairro);
-            sucessAlert();
+            const {uf, logradouro, localidade, bairro, erro} = res.data;
+            if (erro) {
+              setAdress({uf: '', street: '', neighborhood: ''});
+              return;
+            }
+            setAdress({...adress, uf: uf, city: localidade, street: logradouro, neighborhood: bairro});
           })
           .catch((err)=>{
             console.error(err);
@@ -49,12 +45,9 @@ export default function Register() {
     }
   };
 
-  function sucessAlert() {
-    alert('s');
-    return <Alert severity="success">
-      <AlertTitle>Success</AlertTitle>
-        This is a success alert — <strong>check it out!</strong>
-    </Alert>;
+  function submitPatient(e) {
+    e.preventDefault();
+    console.log(patientInfo, adress, zipCode)
   }
 
   useEffect(()=>{
@@ -69,20 +62,20 @@ export default function Register() {
       <Navbar select={'Adicionar'}/>
       <FormSection>
         <FormDiv>
+          <form onSubmit={submitPatient}>
           <RegisterTitle>Registrar Novo Paciente:</RegisterTitle>
-          <InputTag value={name} onChange={(e)=>{
-            setName(e.target.value);
-          }} id="name" label="Nome Completo" variant="outlined" />
-          <InputTag value={email} onChange={(e)=>{
-            setEmail(e.target.value);
-          }} id="email" label="E-mail" variant="outlined" />
-          <DataPicker/>
+          <InputTag required value={patientInfo.name} 
+          onChange={(e)=>{setPatientInfo({...patientInfo, name: e.target.value})}} id="name" label="Nome Completo" variant="outlined" />
+          <InputTag required value={patientInfo.email} onChange={(e)=>{setPatientInfo({...patientInfo, email: e.target.value})}} id="email" label="E-mail" variant="outlined" />
+          <DataPicker birthdate={birthdate} setBirthdate={setBirthdate}/>
           <div>
             <Divider textAlign="left">Endereço</Divider>
           </div>
           <ZipDiv>
-            <InputTag inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}} value={zipCode} helperText="Somente Números" onChange={(e)=>setZipCode(e.target.value)}id="zipCode" label="CEP" variant="outlined" />
+            <InputTag required error={isNaN(zipCode)} inputProps={{maxLength: 8}}  value={zipCode} helperText={isNaN(zipCode) ? 'Somente números' : ''} onChange={(e)=>setZipCode(e.target.value) 
+              }id="zipCode" label="CEP" variant="outlined" />
             <LoadingZipButton
+              disabled={!(zipCode.length === 8) || isNaN(zipCode)}
               onClick={findZip}
               endIcon={<TravelExploreIcon />}
               loading={loading}
@@ -91,33 +84,43 @@ export default function Register() {
             >
             </LoadingZipButton>
           </ZipDiv>
-          <StyledSelect id="state" value={uf} onChange={handleChange}>
-            {ufInfos.map((el, index)=>{
-              return <MenuItem key={el.nome+index} value={el.sigla}>{el.sigla}</MenuItem>;
-            })}
-          </StyledSelect>
-          <InputTag value={city} onChange={(e)=>{
-            setCity(e.target.value);
+          <FormControl>
+              <InputLabel id="uf-label">UF</InputLabel>
+              <StyledSelect required labelId="uf-label" label="UF" id="uf" value={adress.uf} onChange={handleChange}>
+                {ufInfos.map((el, index)=>{
+                  return <MenuItem key={el.nome+index} value={el.sigla}>{el.sigla}</MenuItem>;
+                })}
+              </StyledSelect>
+          </FormControl>
+          <InputTag required value={adress.city} onChange={(e)=>{
+            setAdress({...adress, city: e.target.value});
           }} id="city" label="Cidade" variant="outlined" />
-          <InputTag value={street} onChange={(e)=>{
-            setStreet(e.target.value);
+          <InputTag required value={adress.street} onChange={(e)=>{
+            setAdress({...adress, street: e.target.value});
           }} id="street" label="Rua" variant="outlined" />
-          <InputTag value={neighborhood} onChange={(e)=>{
-            setNeighborhood(e.target.value);
+          <InputTag required value={adress.neighborhood} onChange={(e)=>{
+           setAdress({...adress, neighborhood: e.target.value});
           }} id="neighborhood" label="Bairro" variant="outlined" />
-          <Button variant="contained">Cadastrar</Button>
+          <button disabled={loading}> <FormButton disabled={loading} variant="contained">Cadastrar
+          </FormButton>
+          </button>
+          </form>
         </FormDiv>
-        <SideImage src={doctorPicture} alt="" />
+        <SideImage src={doctorPicture} alt="paciente-e-doutor" />
       </FormSection>
-
     </Container>
-
   );
 }
 
+const FormButton = styled(Button)`
+  width: 610px;
+  margin-left: -5px;
+  font-size: 18px;
+  font-weight: 700;
+`
+
 const ZipDiv = styled('div')`
   display: flex;
-  height: auto;
 `;
 
 const LoadingZipButton =styled(LoadingButton)`
@@ -134,13 +137,16 @@ const StyledSelect = styled(Select)`
 
 const FormSection =styled('section')`
     display: flex;
-    height: 100%;
+    height: 700px;
 `;
 
 const SideImage = styled('img')`
-    width: 50%;
+    border-top: 10px solid #08316A;
+    border-left: 4px solid #08316A;
     object-fit: cover;
-    border-radius: 0px 0px 10px 0px;
+    width: 50%;
+    height: 100%;
+    border-radius: 0px 10px 10px 200px;
 `;
 
 const RegisterTitle = styled('p')`
@@ -156,10 +162,14 @@ const FormDiv = styled('div')`
     flex-direction: column;
     width: 50%;
     padding: 20px;
+    height: 100%;
     display: flex;
     form {
         display: flex;
         flex-direction: column;
+    }
+    button {
+      border: none;
     }
 `;
 
