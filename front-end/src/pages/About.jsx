@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable require-jsdoc */
 import styled from 'styled-components';
 import Container from '../components/Container';
 import Navbar from '../components/Navbar';

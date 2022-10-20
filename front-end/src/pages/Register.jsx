@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable react/react-in-jsx-scope */
 import {styled} from '@mui/material/styles';
 import {TextField, Button, Divider, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
@@ -10,11 +8,12 @@ import Navbar from '../components/Navbar';
 import doctorPicture from '../assets/doctor.jpg';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+import api from "../services/api";
 
 export default function Register() {
   const [patientInfo, setPatientInfo] = useState({name: '', email: ''});
   const [birthdate, setBirthdate] = useState('01/01/2000');
-  const [adress, setAdress] = useState({uf: '', street: '', neighborhood: ''});
+  const [adress, setAdress] = useState({uf: '', city: '', number: '', street: '', neighborhood: ''});
   const [zipCode, setZipCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [ufInfos, setUfInfo] = useState([]);
@@ -31,7 +30,7 @@ export default function Register() {
           .then((res)=>{
             const {uf, logradouro, localidade, bairro, erro} = res.data;
             if (erro) {
-              setAdress({uf: '', street: '', neighborhood: ''});
+              setAdress({uf: '',number: '', street: '', neighborhood: ''});
               return;
             }
             setAdress({...adress, uf: uf, city: localidade, street: logradouro, neighborhood: bairro});
@@ -46,8 +45,27 @@ export default function Register() {
   };
 
   function submitPatient(e) {
+    const {name, email} = patientInfo;
+    const {uf, city, number, street, neighborhood} = adress;
+    // const jsonObj = {
+    //   name, email,
+    //   uf, city, number, street, neighborhood,
+    //   zipCode
+    // }
+    const jsonObj = {
+      ...patientInfo, ...adress, zipCode, birthdate
+    }
     e.preventDefault();
-    console.log(patientInfo, adress, zipCode)
+    api.post('/patients', jsonObj)
+    .then(res=>{
+      console.log(res)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+    .finally(()=>{
+
+    });
   }
 
   useEffect(()=>{
@@ -98,6 +116,9 @@ export default function Register() {
           <InputTag required value={adress.street} onChange={(e)=>{
             setAdress({...adress, street: e.target.value});
           }} id="street" label="Rua" variant="outlined" />
+          <InputTag required value={adress.number} onChange={(e)=>{
+            setAdress({...adress, number: e.target.value});
+          }} id="number" label="Número" variant="outlined" />
           <InputTag required value={adress.neighborhood} onChange={(e)=>{
            setAdress({...adress, neighborhood: e.target.value});
           }} id="neighborhood" label="Bairro" variant="outlined" />
@@ -137,32 +158,36 @@ const StyledSelect = styled(Select)`
 
 const FormSection =styled('section')`
     display: flex;
-    height: 700px;
 `;
 
 const SideImage = styled('img')`
-    border-top: 10px solid #08316A;
+    box-sizing: border-box;
     border-left: 4px solid #08316A;
     object-fit: cover;
     width: 50%;
-    height: 100%;
+    height: 750px;
     border-radius: 0px 10px 10px 200px;
 `;
 
 const RegisterTitle = styled('p')`
     text-align: start;
-    font-size: 30px;
+    font-size: 25px;
     margin: 0px;
     margin-bottom: 10px;
     font-family: 'Libre Franklin', sans-serif;
 `;
 
 const FormDiv = styled('div')`
+    overflow:scroll;
+    overflow-x:hidden;
+    &::-webkit-scrollbar {
+      display: none;
+      }
     display: flex;
     flex-direction: column;
     width: 50%;
+    height: 750px;
     padding: 20px;
-    height: 100%;
     display: flex;
     form {
         display: flex;

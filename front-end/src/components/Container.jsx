@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
 import styled from 'styled-components';
 import Box from '@mui/system/Box';
 
@@ -13,11 +11,11 @@ export default function Container(props){
 
 const ContainerSection = styled(Box)`
     width: 1300px;
-    min-height: 700px;
     margin: 0 auto;
     display: flex;
+    height: 750px;
     flex-direction: column;
-    border-top: 10px solid #08316A;
+    /* border-top: 10px solid #08316A; */
     border-radius: 0px 10px 10px 10px;
     background: rgb(255,255,255);
     background: linear-gradient(180deg, rgba(255,255,255,1) 0%, 

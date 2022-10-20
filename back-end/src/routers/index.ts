@@ -1,7 +1,8 @@
 import { Router } from "express";
+import patientRouter from "./patientRouter.js";
 
 const router = Router();
 
-// router.use();
+router.use(patientRouter);
 
 export default router;

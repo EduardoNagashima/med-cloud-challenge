@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
 import {styled} from '@mui/material/styles';
 import {Link} from 'react-router-dom';
 
@@ -21,6 +19,7 @@ const NavbarDiv = styled('div')`
     width: 1000px;
     margin-top: -70px;
     gap: 1px;
+    border-bottom: 10px solid #08316A;
 `;
 
 const LinkTo = styled(Link)`

@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
 import styled from 'styled-components';
 
 export default function Title({name}) {
@@ -11,14 +9,13 @@ export default function Title({name}) {
 }
 
 const TitleDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    
 `;
 
-const TitleName = styled.h1`
-    font-size: 72px;
+const TitleName = styled.h3`
+    font-size: 70px;
+    margin: 0;
+    margin-bottom: 70px;
     color: #ffffff;
     font-family: 'Manrope', sans-serif;
-    margin-bottom: 80px;
 `;

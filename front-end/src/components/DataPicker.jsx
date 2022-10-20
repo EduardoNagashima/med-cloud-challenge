@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import 'dayjs/locale/pt-br';
 import * as React from 'react';
 
