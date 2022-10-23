@@ -5,6 +5,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DataPicker from '../components/DataPicker';
 import Container from '../components/Container';
 import Navbar from '../components/Navbar';
+import ToastedSnack from '../components/ToastedSnack';
 import doctorPicture from '../assets/doctor.jpg';
 import {useState, useEffect} from 'react';
 import axios from 'axios';
@@ -17,6 +18,14 @@ export default function Register() {
   const [zipCode, setZipCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [ufInfos, setUfInfo] = useState([]);
+  const [open, setAlert] = useState({msg: '' , type: 'success', show: false});
+
+  const onClose = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlert({...open, show: false});
+  };
 
   const handleChange = (event) => {
     setAdress({...adress, uf: event.target.value});
@@ -30,10 +39,12 @@ export default function Register() {
           .then((res)=>{
             const {uf, logradouro, localidade, bairro, erro} = res.data;
             if (erro) {
-              setAdress({uf: '',number: '', street: '', neighborhood: ''});
+              setAdress({uf: '',number: '', city: '', street: '', neighborhood: ''});
+              setAlert({msg: 'CEP Inválido', type: 'error', show: true});
               return;
             }
             setAdress({...adress, uf: uf, city: localidade, street: logradouro, neighborhood: bairro});
+            setAlert({msg: 'CEP Resgatado', type: 'success', show: true});
           })
           .catch((err)=>{
             console.error(err);
@@ -45,26 +56,21 @@ export default function Register() {
   };
 
   function submitPatient(e) {
-    const {name, email} = patientInfo;
-    const {uf, city, number, street, neighborhood} = adress;
-    // const jsonObj = {
-    //   name, email,
-    //   uf, city, number, street, neighborhood,
-    //   zipCode
-    // }
+    setLoading(true);
+    e.preventDefault();
     const jsonObj = {
       ...patientInfo, ...adress, zipCode, birthdate
     }
-    e.preventDefault();
     api.post('/patients', jsonObj)
     .then(res=>{
-      console.log(res)
+      setAlert({msg: 'Paciente Cadastrado com sucesso!', type: 'success', show: true});
     })
     .catch(err=>{
-      console.log(err)
+      console.log(err.response);
+      setAlert({msg: `Erro ao cadastrar paciente. ${err.response.data}`, type: 'error', show: true});
     })
     .finally(()=>{
-
+      setLoading(false);
     });
   }
 
@@ -80,6 +86,7 @@ export default function Register() {
       <Navbar select={'Adicionar'}/>
       <FormSection>
         <FormDiv>
+          <ToastedSnack msg={open.msg} type={open.type} open={open.show} onClose={onClose}/>
           <form onSubmit={submitPatient}>
           <RegisterTitle>Registrar Novo Paciente:</RegisterTitle>
           <InputTag required value={patientInfo.name} 
@@ -134,7 +141,7 @@ export default function Register() {
 }
 
 const FormButton = styled(Button)`
-  width: 610px;
+  width: 609px;
   margin-left: -5px;
   font-size: 18px;
   font-weight: 700;
@@ -142,6 +149,7 @@ const FormButton = styled(Button)`
 
 const ZipDiv = styled('div')`
   display: flex;
+  gap: 10px;
 `;
 
 const LoadingZipButton =styled(LoadingButton)`
