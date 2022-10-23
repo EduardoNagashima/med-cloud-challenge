@@ -21,6 +21,7 @@ model Patient {
   number       Int
   neighborhood String
   zipCode      Int
+  creationDate DateTime @default(now())
 
   @@map("patients")
 }

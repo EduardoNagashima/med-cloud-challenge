@@ -9,6 +9,15 @@ export async function create(patient: patientData) {
     await patientRepository.create(patient);
 }
 
+export async function getAll(){
+    return await patientRepository.getAll();
+}
+
+export async function deleteOne(id: number) {
+    return await patientRepository.deleteOne(id);
+}
+
 export const patientService = {
     create,
+    deleteOne
 }

@@ -8,6 +8,7 @@ import RefreshContext from "../contexts/RefreshContext";
 import PatientList from "../components/PatientList";
 import Loading from "../components/Loading";
 import api from "../services/api";
+import OrderButton from "../components/OrderButton";
 
 export default function Patients() {
   const { count, setCount } = useContext(RefreshContext);
@@ -38,8 +39,10 @@ export default function Patients() {
               {loading ? (
                 <Loading type={"bars"} color={"#fff"} />
               ) : patients.length > 0 ? (
-                //Colocar o menu aqui
-                <PatientList patients={patients} setSelected={setSelected} />
+                <ShowPatients>
+                  <OrderButton />
+                  <PatientList patients={patients} setSelected={setSelected} />
+                </ShowPatients>
               ) : (
                 <h2>Sem Pacientes no momento</h2>
               )}
@@ -53,6 +56,13 @@ export default function Patients() {
     </Container>
   );
 }
+
+const ShowPatients = styled("div")`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+`;
 
 const PatientBox = styled(Box)`
   display: flex;
