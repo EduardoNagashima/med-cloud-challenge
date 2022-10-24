@@ -8,17 +8,20 @@ import RefreshContext from "../contexts/RefreshContext";
 import PatientList from "../components/PatientList";
 import Loading from "../components/Loading";
 import api from "../services/api";
+import Pagination from "../components/Pagintation";
 import OrderButton from "../components/OrderButton";
+import SelectedContext from "../contexts/SelectedContext";
 
 export default function Patients() {
   const { count, setCount } = useContext(RefreshContext);
-  const [selected, setSelected] = useState(false);
+  const { selected, setSelected } = useContext(SelectedContext);
   const [loading, setLoading] = useState(true);
   const [patients, setPatients] = useState([]);
+  const type = JSON.parse(localStorage.getItem("type"));
 
   useEffect(() => {
     api
-      .get("/patients")
+      .get(`/patients${type ? `?type=${type}` : ""}`)
       .then((res) => {
         setPatients(res.data);
       })
@@ -26,11 +29,10 @@ export default function Patients() {
       .finally(() => {
         setLoading(false);
       });
-  }, [count]);
+  }, [count, type]);
 
   return (
     <Container>
-      {console.log(selected)}
       <RefreshContext.Provider value={{ count, setCount }}>
         <Navbar select={"Pacientes"} />
         <PatientSection>
@@ -42,13 +44,14 @@ export default function Patients() {
                 <ShowPatients>
                   <OrderButton />
                   <PatientList patients={patients} setSelected={setSelected} />
+                  <Pagination />
                 </ShowPatients>
               ) : (
                 <h2>Sem Pacientes no momento</h2>
               )}
             </PatientBox>
           </PatientListDiv>
-          <Sidebar selected={selected}>
+          <Sidebar selected={selected.name}>
             <PatientCard patient={selected} />
           </Sidebar>
         </PatientSection>
@@ -66,6 +69,10 @@ const ShowPatients = styled("div")`
 
 const PatientBox = styled(Box)`
   overflow: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   display: flex;
   height: 100%;
   align-items: center;
