@@ -35,7 +35,7 @@ export default function Patients() {
         <Navbar select={"Pacientes"} />
         <PatientSection>
           <PatientListDiv>
-            <PatientBox padding={"20px"}>
+            <PatientBox>
               {loading ? (
                 <Loading type={"bars"} color={"#fff"} />
               ) : patients.length > 0 ? (
@@ -65,6 +65,7 @@ const ShowPatients = styled("div")`
 `;
 
 const PatientBox = styled(Box)`
+  overflow: scroll;
   display: flex;
   height: 100%;
   align-items: center;
