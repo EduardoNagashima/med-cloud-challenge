@@ -1,6 +1,8 @@
 import Joi, { ObjectSchema } from "joi";
+import { patientData } from "../services/patientService";
 
-export const patientInfoSchema: ObjectSchema = Joi.object({
+export const patientInfoSchema: ObjectSchema<patientData> = Joi.object({
+    id: Joi.number().integer(),
     name: Joi.string().required(),
     email: Joi.string().email().required(),
     birthdate: Joi.string().required(),
@@ -10,4 +12,10 @@ export const patientInfoSchema: ObjectSchema = Joi.object({
     street: Joi.string().required(),
     number: Joi.number().integer().required(),
     neighborhood: Joi.string().required(),
+    creationDate: Joi.date().optional()
+})
+
+export const getPatientsSchema: ObjectSchema = Joi.object({
+    take: Joi.number().integer(),
+    skip: Joi.number().integer()
 })

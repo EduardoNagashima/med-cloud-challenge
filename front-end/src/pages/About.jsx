@@ -21,7 +21,8 @@ export default function About() {
           <Typography
             variant="h5"
             textAlign={"justify"}
-            width={"50%"}
+            width={"60%"}
+            fontSize={"26px"}
             margin={"20px 20px 0px 0px"}
           >
             Soluções inovadoras que impactam positivamente milhões de vidas
@@ -58,9 +59,9 @@ const ContentDiv = styled.div`
   img {
     width: 50%;
     object-fit: cover;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
-      rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    border-radius: 10px 200px 0px;
+    margin-bottom: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
   }
 `;
 

@@ -20,7 +20,7 @@ export default function PatientList({ patients }) {
       sx={{ borderRadius: "5px", width: "100%", bgcolor: "background.paper" }}
     >
       <nav aria-label="main mailbox folders">
-        <List>
+        <List maxWidth sx={{ width: "100%" }}>
           {patients.map((patient, index) => {
             const creationDate = dayjs(patient.creationDate).format(
               "DD/MM/YYYY - HH:mm"
@@ -37,9 +37,12 @@ export default function PatientList({ patients }) {
                     <ListItemIcon>
                       <PersonIcon />
                     </ListItemIcon>
-                    <ListItemText primary={patient.name} />
-                    <ListItemText primary={patient.email} />
-                    <ListItemText primary={FormatedDate} />
+                    <NameItem primary={patient.name} />
+                    <NameItem primary={patient.email} />
+                    <NameItem
+                      sx={{ textAlign: "center" }}
+                      primary={FormatedDate}
+                    />
                   </ListItemButtonSt>
                 </ListItem>
                 <Divider />
@@ -52,10 +55,17 @@ export default function PatientList({ patients }) {
   );
 }
 
+const NameItem = styled(ListItemText)`
+  max-width: 30%;
+  word-break: break-word;
+`;
+
 const ListItemButtonSt = styled(ListItemButton)`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  width: 100%;
+  justify-content: space-between;
 `;
 
 const PatientBox = styled(Box)`

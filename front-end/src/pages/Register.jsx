@@ -22,7 +22,7 @@ const FormSection = styled("section")`
 
 const SideImage = styled("img")`
   box-sizing: border-box;
-  border-left: 4px solid #08316a;
+  border-left: 10px solid #08316a;
   object-fit: cover;
   width: 50%;
   height: 750px;

@@ -1,4 +1,5 @@
 import { Patient } from "@prisma/client";
+import { idValidation, patValidation } from "../middlewares/patientValidationMIddleware.js";
 import { patientRepository } from "../repositories/patientRepository.js";
 
 export type patientData = Omit<Patient, "id">;
@@ -9,15 +10,23 @@ export async function create(patient: patientData) {
     await patientRepository.create(patient);
 }
 
-export async function getAll(){
-    return await patientRepository.getAll();
+export async function getAll(skip: number, take: number){
+    return await patientRepository.getAll(skip, take);
 }
 
 export async function deleteOne(id: number) {
     return await patientRepository.deleteOne(id);
 }
 
+export async function updateService(id: number, patient: Patient){
+    delete patient.creationDate;
+    const emailExists = await patientRepository.findByEmail(patient.email);
+    if (emailExists && patient.id !== emailExists.id) throw { type: "CONFLICT", message: 'Email já está em uso' };
+    await patientRepository.updateOne(id, patient);
+}
+
 export const patientService = {
     create,
-    deleteOne
+    deleteOne,
+    updateService
 }

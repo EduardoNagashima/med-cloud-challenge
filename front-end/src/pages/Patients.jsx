@@ -21,7 +21,7 @@ export default function Patients() {
 
   useEffect(() => {
     api
-      .get(`/patients${type ? `?type=${type}` : ""}`)
+      .get(`/patients${type ? `?type=${type}` : ""}`, { take: 100, skip: 0 })
       .then((res) => {
         setPatients(res.data);
       })
@@ -39,7 +39,7 @@ export default function Patients() {
           <PatientListDiv>
             <PatientBox>
               {loading ? (
-                <Loading type={"bars"} color={"#fff"} />
+                <Loading type={"bars"} color={"#6699CC"} />
               ) : patients.length > 0 ? (
                 <ShowPatients>
                   <OrderButton />
@@ -52,7 +52,7 @@ export default function Patients() {
             </PatientBox>
           </PatientListDiv>
           <Sidebar selected={selected.name}>
-            <PatientCard patient={selected} />
+            {selected.id && <PatientCard patient={selected} />}
           </Sidebar>
         </PatientSection>
       </RefreshContext.Provider>

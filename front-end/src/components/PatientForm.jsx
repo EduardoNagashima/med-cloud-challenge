@@ -33,10 +33,10 @@ const PatientForm = () => {
     street: "",
     neighborhood: "",
   });
-  const [open, setAlert] = useState({ msg: "", type: "success", show: false });
   const [zipCode, setZipCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [ufInfos, setUfInfo] = useState([]);
+  const [open, setAlert] = useState({ msg: "", type: "success", show: false });
 
   const onClose = (e, reason) => {
     if (reason === "clickaway") {
@@ -105,7 +105,7 @@ const PatientForm = () => {
         });
       })
       .catch((err) => {
-        console.log(err.response);
+        console.error(err.response);
         setAlert({
           msg: `Erro ao cadastrar paciente. ${err.response.data}`,
           type: "error",

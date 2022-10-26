@@ -8,7 +8,6 @@ const OrderButton = () => {
 
   function setLocalStorage(type) {
     localStorage.setItem("type", JSON.stringify(type));
-    console.log(localStorage.getItem("type"));
     setCount(count + 1);
   }
 
