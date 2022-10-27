@@ -18,14 +18,20 @@ export default function Patients() {
   const [loading, setLoading] = useState(true);
   const [patients, setPatients] = useState([]);
   const type = JSON.parse(localStorage.getItem("type"));
+  const { pagination, setPagination } = useState({ take: 10, skip: 0 });
 
   useEffect(() => {
     api
-      .get(`/patients${type ? `?type=${type}` : ""}`, { take: 100, skip: 0 })
+      .get(`/patients${type ? `?type=${type}` : ""}`, {
+        take: pagination?.take || 10,
+        skip: pagination?.skip || 0,
+      })
       .then((res) => {
         setPatients(res.data);
       })
-      .catch((err) => {})
+      .catch((err) => {
+        console.error(err);
+      })
       .finally(() => {
         setLoading(false);
       });
@@ -44,7 +50,11 @@ export default function Patients() {
                 <ShowPatients>
                   <OrderButton />
                   <PatientList patients={patients} setSelected={setSelected} />
-                  <Pagination />
+                  <Pagination
+                    total={patients.length}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                  />
                 </ShowPatients>
               ) : (
                 <h2>Sem Pacientes no momento</h2>
