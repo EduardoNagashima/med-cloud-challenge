@@ -12,12 +12,13 @@ import api from "../services/api";
 import Select from "@mui/material/Select";
 import RefreshContext from "../contexts/RefreshContext";
 import ToastedSnack from "./ToastedSnack";
+import SelectedContext from "../contexts/SelectedContext";
 
 const EditForm = ({ patient }) => {
   const { count, setCount } = React.useContext(RefreshContext);
+  const { setSelected } = React.useContext(SelectedContext);
   const [edit, setEdit] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [err, setErr] = React.useState({});
   const [editValues, setEditValues] = React.useState(patient);
   const [birthdate, setBirthdate] = React.useState(patient.birthdate);
   const [open, setAlert] = React.useState({
@@ -54,6 +55,13 @@ const EditForm = ({ patient }) => {
     "SE",
     "TO",
   ];
+
+  const getPatient = (id) => {
+    api.get(`patients/${id}`).then((res) => {
+      console.log(res.data);
+      setSelected(res.data);
+    });
+  };
 
   const onClose = (e, reason) => {
     if (reason === "clickaway") {
@@ -97,6 +105,7 @@ const EditForm = ({ patient }) => {
         });
       })
       .finally(() => {
+        getPatient(editValues.id);
         setLoading(false);
       });
   };
@@ -120,7 +129,6 @@ const EditForm = ({ patient }) => {
         <form>
           <TextField
             required
-            error={err.name}
             onChange={(e) =>
               setEditValues({ ...editValues, name: e.target.value })
             }
@@ -132,7 +140,6 @@ const EditForm = ({ patient }) => {
           />
           <TextField
             required
-            error={err.email}
             onChange={(e) =>
               setEditValues({ ...editValues, email: e.target.value })
             }
@@ -144,7 +151,6 @@ const EditForm = ({ patient }) => {
           />
           <TextField
             required
-            error={err.zipCode}
             onChange={(e) =>
               setEditValues({ ...editValues, zipCode: e.target.value })
             }
@@ -177,7 +183,6 @@ const EditForm = ({ patient }) => {
           </FormControl>
           <TextField
             required
-            error={err.city}
             onChange={(e) =>
               setEditValues({ ...editValues, city: e.target.value })
             }
@@ -189,7 +194,6 @@ const EditForm = ({ patient }) => {
           />
           <TextField
             required
-            error={err.street}
             onChange={(e) =>
               setEditValues({ ...editValues, street: e.target.value })
             }
@@ -201,7 +205,6 @@ const EditForm = ({ patient }) => {
           />
           <TextField
             required
-            error={err.number}
             onChange={(e) =>
               setEditValues({ ...editValues, number: e.target.value })
             }
@@ -213,7 +216,6 @@ const EditForm = ({ patient }) => {
           />
           <TextField
             required
-            error={err.neighborhood}
             onChange={(e) =>
               setEditValues({ ...editValues, neighborhood: e.target.value })
             }
@@ -225,7 +227,6 @@ const EditForm = ({ patient }) => {
           />
           <ConfirmEditDiv>
             <DataPicker
-              error={err.date}
               value={birthdate}
               edit={edit}
               setBirthdate={setBirthdate}

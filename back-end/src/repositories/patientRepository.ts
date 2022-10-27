@@ -1,5 +1,4 @@
 import prisma from "../config/database.js";
-import { update } from "../controllers/patientController.js";
 import { patientData } from "../services/patientService.js";
 
 async function create(patient: patientData) {
@@ -7,23 +6,23 @@ async function create(patient: patientData) {
 }
 
  async function getAll(skip: number, take: number){
-    return prisma.patient.findMany({skip:skip, take:take});
+    return await prisma.patient.findMany({skip:skip, take:take});
  }
 
 async function findByEmail(email: string) {
-    return prisma.patient.findUnique({ where: { email } })
+    return  await prisma.patient.findUnique({ where: { email } })
 }
 
 async function orderByName() {
-    return prisma.patient.findMany({orderBy:{name: 'asc'}});
+    return await prisma.patient.findMany({orderBy:{name: 'asc'}});
 }
 
 async function orderByEmail() {
-    return prisma.patient.findMany({orderBy:{email: 'asc'}});
+    return await prisma.patient.findMany({orderBy:{email: 'asc'}});
 }
 
 async function orderByCreationDate() {
-    return prisma.patient.findMany({orderBy:{creationDate: 'desc'}});
+    return await prisma.patient.findMany({orderBy:{creationDate: 'desc'}});
 }
 
 async function deleteOne(id: number){
@@ -34,8 +33,13 @@ async function updateOne(id: number, patient: patientData ){
     await prisma.patient.update({where: {id}, data: patient})
 }
 
+async function getById(id: number){
+    return await prisma.patient.findUnique({where: {id}})
+}
+
 export const patientRepository = {
     create,
+    getById,
     updateOne,
     findByEmail,
     getAll,

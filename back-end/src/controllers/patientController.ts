@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getPatientsSchema } from '../utils/schemas.js';
-import { create, deleteOne, getAll, updateService } from "../services/patientService.js";
+import { create, deleteOne, getAll, updateService, getByIdService } from "../services/patientService.js";
 import { patientRepository } from "../repositories/patientRepository.js";
 
 export async function post(req: Request, res: Response) {
@@ -39,6 +39,14 @@ export async function deletePatient(req: Request, res:Response){
     
     await deleteOne(parseInt(id));
     return res.sendStatus(204);
+}
+
+export async function getById(req:Request, res: Response){
+    const {id} = req.params;
+
+    const patient = await getByIdService(parseInt(id));
+
+    return res.send(patient);
 }
 
 export async function update(req: Request, res: Response){

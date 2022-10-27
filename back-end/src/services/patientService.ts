@@ -1,5 +1,4 @@
 import { Patient } from "@prisma/client";
-import { idValidation, patValidation } from "../middlewares/patientValidationMIddleware.js";
 import { patientRepository } from "../repositories/patientRepository.js";
 
 export type patientData = Omit<Patient, "id">;
@@ -12,6 +11,10 @@ export async function create(patient: patientData) {
 
 export async function getAll(skip: number, take: number){
     return await patientRepository.getAll(skip, take);
+}
+
+export async function getByIdService(id: number){
+    return await patientRepository.getById(id);
 }
 
 export async function deleteOne(id: number) {

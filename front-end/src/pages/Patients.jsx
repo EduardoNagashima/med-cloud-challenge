@@ -49,7 +49,7 @@ export default function Patients() {
               ) : patients.length > 0 ? (
                 <ShowPatients>
                   <OrderButton />
-                  <PatientList patients={patients} setSelected={setSelected} />
+                  <PatientList patients={patients} />
                   <Pagination
                     total={patients.length}
                     pagination={pagination}

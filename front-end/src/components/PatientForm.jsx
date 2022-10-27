@@ -17,13 +17,6 @@ import axios from "axios";
 import api from "../services/api";
 
 const PatientForm = () => {
-  useEffect(() => {
-    axios
-      .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-      .then((res) => {
-        setUfInfo(res.data);
-      });
-  }, []);
   const [patientInfo, setPatientInfo] = useState({ name: "", email: "" });
   const [birthdate, setBirthdate] = useState("01/01/2000");
   const [adress, setAdress] = useState({
@@ -86,9 +79,25 @@ const PatientForm = () => {
     }
   };
 
+  useEffect(() => {
+    axios
+      .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+      .then((res) => {
+        setUfInfo(res.data);
+      });
+  }, []);
+
   function submitPatient(e) {
-    setLoading(true);
     e.preventDefault();
+    if (birthdate === "01/01/2000") {
+      setAlert({
+        msg: "Coloque uma data de nascimento válida!!",
+        type: "warning",
+        show: true,
+      });
+      return;
+    }
+    setLoading(true);
     const jsonObj = {
       ...patientInfo,
       ...adress,
@@ -107,7 +116,7 @@ const PatientForm = () => {
       .catch((err) => {
         console.error(err.response);
         setAlert({
-          msg: `Erro ao cadastrar paciente. ${err.response.data}`,
+          msg: `Erro ao cadastrar paciente. ${err.response?.data}`,
           type: "error",
           show: true,
         });
