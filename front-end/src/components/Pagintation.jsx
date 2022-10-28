@@ -1,25 +1,34 @@
 import * as React from "react";
 import TablePagination from "@mui/material/TablePagination";
+import { styled } from "@mui/system";
 
-export default function TablePaginationDemo(props) {
-  const [page, setPage] = React.useState(0);
+export default function TablePaginationDemo({
+  setPage,
+  setPagination,
+  pagination,
+  page,
+  total,
+}) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    props.setPagination({ ...pagination, skip: rowsPerPage * page });
+    setPagination({
+      ...pagination,
+      skip: rowsPerPage * page,
+    });
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    setPagination({ ...props.pagination, take: rowsPerPage });
+    setPagination({ ...pagination, take: rowsPerPage });
   };
 
   return (
-    <TablePagination
+    <StyledPagination
       component="div"
-      count={props.total}
+      count={total}
       width={"100%"}
       page={page}
       onPageChange={handleChangePage}
@@ -28,3 +37,11 @@ export default function TablePaginationDemo(props) {
     />
   );
 }
+
+const StyledPagination = styled(TablePagination)`
+  overflow: hidden;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;

@@ -58,7 +58,6 @@ const EditForm = ({ patient }) => {
 
   const getPatient = (id) => {
     api.get(`patients/${id}`).then((res) => {
-      console.log(res.data);
       setSelected(res.data);
     });
   };
@@ -244,7 +243,7 @@ const EditForm = ({ patient }) => {
           </ConfirmEditDiv>
           <IconsDiv>
             <SwitchDisabled edit={edit} setEdit={setEdit} />
-            <DeleteButton disabled={edit} id={patient.id} />
+            <DeleteButton setAlert={setAlert} disabled={edit} id={patient.id} />
           </IconsDiv>
         </form>
       )}

@@ -14,11 +14,12 @@ import SelectedContext from "../contexts/SelectedContext";
 
 export default function Patients() {
   const { count, setCount } = useContext(RefreshContext);
-  const { selected, setSelected } = useContext(SelectedContext);
+  const { selected } = useContext(SelectedContext);
   const [loading, setLoading] = useState(true);
   const [patients, setPatients] = useState([]);
   const type = JSON.parse(localStorage.getItem("type"));
   const { pagination, setPagination } = useState({ take: 10, skip: 0 });
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     api
@@ -35,7 +36,7 @@ export default function Patients() {
       .finally(() => {
         setLoading(false);
       });
-  }, [count, type]);
+  }, [count, type, page]);
 
   return (
     <Container>
@@ -54,6 +55,8 @@ export default function Patients() {
                     total={patients.length}
                     pagination={pagination}
                     setPagination={setPagination}
+                    page={page}
+                    setPage={setPage}
                   />
                 </ShowPatients>
               ) : (

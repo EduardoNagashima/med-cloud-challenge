@@ -85,7 +85,7 @@ const PatientForm = () => {
       .then((res) => {
         setUfInfo(res.data);
       });
-  }, []);
+  }, [open]);
 
   function submitPatient(e) {
     e.preventDefault();
