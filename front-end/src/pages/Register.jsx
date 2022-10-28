@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import Container from "../components/Container";
 import Navbar from "../components/Navbar";
-import doctorPicture from "../assets/doctor.jpg";
+import doctorPicture from "../assets/doctor.webp";
 import PatientForm from "../components/PatientForm";
 
 export default function Register() {

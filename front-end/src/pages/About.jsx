@@ -2,7 +2,8 @@ import { Typography, Divider, Link } from "@mui/material";
 import styled from "styled-components";
 import Container from "../components/Container";
 import Navbar from "../components/Navbar";
-import doctorCoffee from "../assets/doctorCoffee.jpg";
+import doctorCoffee from "../assets/doctorCoffee.webp";
+
 export default function About() {
   return (
     <Container>

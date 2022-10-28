@@ -163,9 +163,9 @@ const PatientForm = () => {
           <InputTag
             required
             error={isNaN(zipCode)}
+            helperText={isNaN(zipCode) ? "Somente números" : ""}
             inputProps={{ maxLength: 8 }}
             value={zipCode}
-            helperText={isNaN(zipCode) ? "Somente números" : ""}
             onChange={(e) => setZipCode(e.target.value)}
             id="zipCode"
             label="CEP"
@@ -216,11 +216,13 @@ const PatientForm = () => {
             setAdress({ ...adress, street: e.target.value });
           }}
           id="street"
-          label="Rua"
+          label="Logradouro"
           variant="outlined"
         />
         <InputTag
           required
+          error={isNaN(adress.number)}
+          helperText={isNaN(adress.number) ? "Somente números" : ""}
           value={adress.number}
           onChange={(e) => {
             setAdress({ ...adress, number: e.target.value });
