@@ -24,7 +24,7 @@ const EditForm = ({ patient }) => {
   const { setSelected } = React.useContext(SelectedContext);
   const [edit, setEdit] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: patient });
+  const { register, control, handleSubmit, setValue, formState: { errors } } = useForm({ defaultValues: patient });
   const [open, setAlert] = React.useState({
     msg: "",
     type: "success",
@@ -76,7 +76,15 @@ const EditForm = ({ patient }) => {
   };
 
   useEffect(() => {
-    setSelected(patient)
+    setValue('id', patient.id)
+    setValue('name', patient.name);
+    setValue('email', patient.email);
+    setValue('zipCode', patient.zipCode);
+    setValue('uf', patient.uf);
+    setValue('city', patient.city);
+    setValue('street', patient.street);
+    setValue('number', patient.number);
+    setValue('neighborhood', patient.neighborhood);
   }, [patient, count]);
 
   function submitEdit(data) {
