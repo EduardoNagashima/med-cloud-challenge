@@ -12,12 +12,14 @@ import Select from "@mui/material/Select";
 import RefreshContext from "../contexts/RefreshContext";
 import ToastedSnack from "./ToastedSnack";
 import SelectedContext from "../contexts/SelectedContext";
+import { useForm, Controller, getValues } from "react-hook-form";
 
 const EditForm = ({ patient }) => {
   const { count, setCount } = React.useContext(RefreshContext);
   const { setSelected } = React.useContext(SelectedContext);
   const [edit, setEdit] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+  const { register, control } = useForm();
   const [editValues, setEditValues] = React.useState(patient);
   const [birthdate, setBirthdate] = React.useState(patient.birthdate);
 

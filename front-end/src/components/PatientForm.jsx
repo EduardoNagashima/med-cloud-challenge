@@ -1,9 +1,11 @@
+import dayjs from 'dayjs' // ES 2015
+import "dayjs/locale/pt-br";
 import { styled } from "@mui/material/styles";
 import { TextField, Button, Divider, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import ToastedSnack from "../components/ToastedSnack";
 import { useEffect, useState } from "react";
@@ -15,7 +17,6 @@ const PatientForm = () => {
   const { register, control, reset, watch, resetField, setValue, getValues, formState: { errors }, handleSubmit } = useForm();
   const [open, setAlert] = useState({ msg: "", type: "success", show: false });
   const [ufInfos, setUfInfo] = useState([]);
-  const [birthdate, setBirthdate] = useState();
   const [loading, setLoading] = useState(false);
   const watchAllFields = watch();
   const person = ['name', 'email'];
@@ -29,10 +30,6 @@ const PatientForm = () => {
       return;
     }
     setAlert({ ...open, show: false });
-  };
-
-  const handleChange = (newValue) => {
-    setBirthdate(newValue);
   };
 
   const findZip = (e) => {
@@ -76,10 +73,8 @@ const PatientForm = () => {
 
   function submitPatient(data) {
     setLoading(true);
-    console.log(data)
     const jsonObj = {
-      ...data,
-      birthdate,
+      ...data, birthdate: new Date(dayjs(data.birthdate))
     };
     api
       .post("/patients", jsonObj)
@@ -120,25 +115,31 @@ const PatientForm = () => {
           />
         )}
 
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DesktopDatePicker
-            label="Birthdate"
-            inputFormat="DD/MM/YYYY"
-            value={birthdate}
-            onChange={handleChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
+        <Controller
+          name="birthdate"
+          control={control}
+          render={({ field: { ref, ...rest } }) =>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
+              <DesktopDatePicker
+                label="Birthdate"
+                inputFormat="DD/MM/YYYY"
+                renderInput={(params) => <TextField {...params} />}
+                {...rest}
+              />
+            </LocalizationProvider>
+          }
+        >
+        </Controller>
 
         <div>
           <Divider textAlign="left">Endereço</Divider>
         </div>
         <ZipDiv>
           <InputTag
-            {...register("zipCode", { required: true, maxLength: 8, minLength: 8 })}
+            {...register("zipCode", { required: true, maxLength: 8, minLength: 8, pattern: /^[0-9]{8}$/ })}
             error={errors.zipCode?.type}
             helperText={errors.zipCode?.type && "Somente números, 8 dígitos"}
-            inputProps={{ maxLength: 8 }}
+
             id="zipCode"
             label="CEP"
             variant="outlined"
@@ -175,7 +176,6 @@ const PatientForm = () => {
           <InputTag key={el + index}
             {...register(el, { required: true })}
             error={errors.el?.type}
-            value={watchAllFields.el}
             helperText={errors.el?.type && "Campo Obrigatório"}
             id={el}
             label={capitalizeFirstLetter(el)}
