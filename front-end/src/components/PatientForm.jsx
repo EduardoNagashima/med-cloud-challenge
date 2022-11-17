@@ -1,29 +1,53 @@
-import dayjs from 'dayjs' // ES 2015
+import dayjs from 'dayjs'
 import "dayjs/locale/pt-br";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { styled } from "@mui/material/styles";
 import { TextField, Button, Divider, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import ToastedSnack from "../components/ToastedSnack";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import FormHelperText from '@mui/material/FormHelperText';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import api from "../services/api";
 
 const PatientForm = () => {
-  const { register, control, reset, watch, resetField, setValue, getValues, formState: { errors }, handleSubmit } = useForm();
+  const { register, control, resetField, setValue, watch, getValues, formState: { errors }, handleSubmit } = useForm();
   const [open, setAlert] = useState({ msg: "", type: "success", show: false });
-  const [ufInfos, setUfInfo] = useState([]);
   const [loading, setLoading] = useState(false);
-  const watchAllFields = watch();
-  const person = ['name', 'email'];
-  const address = ['city', 'street', 'number', 'neighborhood'];
-
-  const capitalizeFirstLetter = ([first, ...rest], locale = navigator.language) =>
-    first === undefined ? '' : first.toLocaleUpperCase(locale) + rest.join('')
+  const watchZipCode = watch('zipCode');
+  const UFs = [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MS",
+    "MT",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
 
   const onClose = (e, reason) => {
     if (reason === "clickaway") {
@@ -63,14 +87,6 @@ const PatientForm = () => {
     }
   };
 
-  useEffect(() => {
-    axios
-      .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-      .then((res) => {
-        setUfInfo(res.data);
-      });
-  }, [open]);
-
   function submitPatient(data) {
     setLoading(true);
     const jsonObj = {
@@ -78,7 +94,7 @@ const PatientForm = () => {
     };
     api
       .post("/patients", jsonObj)
-      .then((res) => {
+      .then(() => {
         setAlert({
           msg: "Paciente Cadastrado com sucesso!",
           type: "success",
@@ -103,17 +119,21 @@ const PatientForm = () => {
       <form onSubmit={handleSubmit((data) => submitPatient(data))}>
         <RegisterTitle>Registrar Novo Paciente:</RegisterTitle>
 
-        {person.map((el, index) =>
-          <InputTag key={el + index}
-            {...register(el, { required: true })}
-            error={errors.el?.type}
-            helperText={errors.el?.type && "Campo obrigatório"}
-            type={el}
-            id={el}
-            label={capitalizeFirstLetter(el)}
-            variant="outlined"
-          />
-        )}
+        <InputTag
+          {...register('name', { required: true })}
+          error={errors.name?.type}
+          helperText={errors.name?.type && "Campo obrigatório"}
+          variant="outlined"
+          label='Nome'
+        />
+
+        <InputTag
+          {...register('email', { required: true })}
+          error={errors.email?.type}
+          helperText={errors.email?.type && "Campo obrigatório"}
+          variant="outlined"
+          label='E-mail'
+        />
 
         <Controller
           name="birthdate"
@@ -139,7 +159,6 @@ const PatientForm = () => {
             {...register("zipCode", { required: true, maxLength: 8, minLength: 8, pattern: /^[0-9]{8}$/ })}
             error={errors.zipCode?.type}
             helperText={errors.zipCode?.type && "Somente números, 8 dígitos"}
-
             id="zipCode"
             label="CEP"
             variant="outlined"
@@ -155,42 +174,71 @@ const PatientForm = () => {
         </ZipDiv>
         <FormControl>
           <InputLabel id="uf-label">UF</InputLabel>
-          <StyledSelect
-            {...register("uf")}
-            value={watchAllFields.uf}
-            labelId="uf-label"
-            label="UF"
-            id="uf"
+          <Controller
+            name='uf'
+            rules={{ required: true }}
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) =>
+              <StyledSelect
+                defaultValue={''}
+                onChange={onChange}
+                error={error}
+                value={watchZipCode}
+                labelId="uf-label"
+                label="UF"
+                id="uf"
+              >
+                {UFs.map((el, index) => {
+                  return (
+                    <MenuItem key={el + index} value={el} >
+                      {el}
+                    </MenuItem>
+                  );
+                })}
+                {error && <FormHelperText>Oi</FormHelperText>}
+              </StyledSelect>
+            }
           >
-            {ufInfos.map((el, index) => {
-              return (
-                <MenuItem key={el.nome + index} value={el.sigla}>
-                  {el.sigla}
-                </MenuItem>
-              );
-            })}
-          </StyledSelect>
+          </Controller>
         </FormControl>
 
-        {address.map((el, index) =>
-          <InputTag key={el + index}
-            {...register(el, { required: true })}
-            error={errors.el?.type}
-            helperText={errors.el?.type && "Campo Obrigatório"}
-            id={el}
-            label={capitalizeFirstLetter(el)}
-            variant="outlined"
-          />
-        )}
+        <InputTag
+          {...register('city', { required: true })}
+          error={errors?.city}
+          helperText={errors?.city && "Campo Obrigatório"}
+          label='Cidade'
+          variant="outlined"
+        />
+        <InputTag
+          {...register('street', { required: true })}
+          error={errors?.street}
+          helperText={errors?.street && "Campo Obrigatório"}
+          label='Logradouro'
+          variant="outlined"
+        />
+        <InputTag
+          {...register('number', { required: true, pattern: /^[0-9]*$/ })}
+          error={errors?.number}
+          helperText={errors?.number && "Somente números"}
+          label='Número'
+          variant="outlined"
+        />
+        <InputTag
+          {...register('neighborhood', { required: true })}
+          error={errors?.neighborhood}
+          helperText={errors?.neighborhood && "Campo Obrigatório"}
+          label='Bairro'
+          variant="outlined"
+        />
 
         <button disabled={loading}>
           {" "}
-          <FormButton disabled={loading} variant="contained">
+          <FormButton type='submit' disabled={loading} variant="contained">
             Cadastrar
           </FormButton>
         </button>
-      </form>
-    </FormDiv>
+      </form >
+    </FormDiv >
   );
 };
 
