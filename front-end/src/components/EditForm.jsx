@@ -2,7 +2,6 @@ import * as React from "react";
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import DataPicker from "./DataPicker";
 import SwitchDisabled from "./SwitchDisabled";
 import Loading from "./Loading";
 import { Button, FormControl, InputLabel, MenuItem } from "@mui/material";
@@ -21,11 +20,13 @@ const EditForm = ({ patient }) => {
   const [loading, setLoading] = React.useState(false);
   const [editValues, setEditValues] = React.useState(patient);
   const [birthdate, setBirthdate] = React.useState(patient.birthdate);
+
   const [open, setAlert] = React.useState({
     msg: "",
     type: "success",
     show: false,
   });
+
   const UFs = [
     "AC",
     "AL",
@@ -225,13 +226,7 @@ const EditForm = ({ patient }) => {
             variant="filled"
           />
           <ConfirmEditDiv>
-            <DataPicker
-              value={birthdate}
-              edit={edit}
-              setBirthdate={setBirthdate}
-              sx={{ width: "100%" }}
-              birthdate={patient.birthdate}
-            />
+
             <Button
               onClick={submitEdit}
               sx={{ alignSelf: "center" }}
