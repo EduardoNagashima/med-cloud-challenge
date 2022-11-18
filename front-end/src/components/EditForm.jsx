@@ -2,7 +2,11 @@ import * as React from "react";
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import DataPicker from "./DataPicker";
+import dayjs from 'dayjs'
+import "dayjs/locale/pt-br";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import SwitchDisabled from "./SwitchDisabled";
 import Loading from "./Loading";
 import { Button, FormControl, InputLabel, MenuItem } from "@mui/material";
@@ -13,19 +17,20 @@ import Select from "@mui/material/Select";
 import RefreshContext from "../contexts/RefreshContext";
 import ToastedSnack from "./ToastedSnack";
 import SelectedContext from "../contexts/SelectedContext";
+import { useForm, Controller } from "react-hook-form";
 
 const EditForm = ({ patient }) => {
   const { count, setCount } = React.useContext(RefreshContext);
   const { setSelected } = React.useContext(SelectedContext);
   const [edit, setEdit] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [editValues, setEditValues] = React.useState(patient);
-  const [birthdate, setBirthdate] = React.useState(patient.birthdate);
+  const { register, control, handleSubmit, setValue, formState: { errors } } = useForm({ defaultValues: patient });
   const [open, setAlert] = React.useState({
     msg: "",
     type: "success",
     show: false,
   });
+
   const UFs = [
     "AC",
     "AL",
@@ -69,21 +74,23 @@ const EditForm = ({ patient }) => {
     setAlert({ ...open, show: false });
   };
 
-  const handleChange = (event) => {
-    setEditValues({ ...editValues, uf: event.target.value });
-  };
-
   useEffect(() => {
-    setEditValues({ ...patient });
+    setValue('id', patient.id)
+    setValue('name', patient.name);
+    setValue('email', patient.email);
+    setValue('zipCode', patient.zipCode);
+    setValue('uf', patient.uf);
+    setValue('city', patient.city);
+    setValue('street', patient.street);
+    setValue('number', patient.number);
+    setValue('neighborhood', patient.neighborhood);
   }, [patient, count]);
 
-  const submitEdit = (e) => {
-    e.preventDefault();
+  function submitEdit(data) {
     setLoading(true);
     api
-      .put(`/patients/${editValues.id}`, {
-        ...editValues,
-        birthdate: birthdate,
+      .put(`/patients/${patient.id}`, {
+        ...data, birthdate: new Date(dayjs(data.birthdate))
       })
       .then((res) => {
         if (res.status === 204) {
@@ -104,7 +111,7 @@ const EditForm = ({ patient }) => {
         });
       })
       .finally(() => {
-        getPatient(editValues.id);
+        getPatient(patient.id);
         setLoading(false);
       });
   };
@@ -125,115 +132,103 @@ const EditForm = ({ patient }) => {
           width={"100%"}
         />
       ) : (
-        <form>
+        <form onSubmit={handleSubmit((data) => submitEdit(data))}>
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, name: e.target.value })
-            }
+            {...register('name', { required: true })}
             disabled={edit}
+            error={errors?.name}
+            name='name'
             sx={{ width: "100%" }}
-            value={editValues.name}
             label="Nome"
             variant="filled"
           />
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, email: e.target.value })
-            }
+            type="email"
+            {...register('email', { required: true })}
+            error={errors?.email}
+            name="email"
             disabled={edit}
             sx={{ width: "100%" }}
-            value={editValues.email}
             label="Email"
             variant="filled"
           />
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, zipCode: e.target.value })
-            }
+            {...register('zipCode', { required: true, maxLength: 8, minLength: 8, pattern: /^[0-9]{8}$/ })}
             disabled={edit}
+            error={errors?.zipCode}
             sx={{ width: "100%" }}
-            value={editValues.zipCode}
             label="CEP"
             variant="filled"
           />
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel id="uf-label">UF</InputLabel>
-            <Select
-              disabled={edit}
-              required
-              variant="filled"
-              labelId="uf-label"
-              label="UF"
-              id="uf"
-              value={editValues.uf}
-              onChange={handleChange}
-            >
-              {UFs.map((el, index) => {
-                return (
-                  <MenuItem key={el + index} value={el}>
-                    {el}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, city: e.target.value })
+
+          <Controller
+            name="uf"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) =>
+              <FormControl variant="filled" sx={{ width: "100%" }}>
+                <InputLabel id='uf-label'>UF</InputLabel>
+                <Select {...field} disabled={edit} error={errors?.uf} defaultValue="" labelId="uf-label" id="uf" label='UF'>
+                  {UFs.map((el, index) =>
+                    <MenuItem key={el + index} value={el}>
+                      <span>{el}</span>
+                    </MenuItem>
+                  )}
+                </Select>
+              </FormControl>
             }
+          />
+          <TextField
+            {...register('city', { required: true })}
             disabled={edit}
+            error={errors?.city}
             sx={{ width: "100%" }}
-            value={editValues.city}
             label="Cidade"
             variant="filled"
           />
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, street: e.target.value })
-            }
+            {...register('street', { required: true })}
             disabled={edit}
+            error={errors?.street}
             sx={{ width: "100%" }}
-            value={editValues.street}
             label="Logradouro"
             variant="filled"
           />
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, number: e.target.value })
-            }
+            {...register('number', { required: true, pattern: /^[0-9]*$/ })}
             disabled={edit}
+            error={errors?.number}
             sx={{ width: "100%" }}
-            value={editValues.number}
             label="Número"
             variant="filled"
           />
           <TextField
-            required
-            onChange={(e) =>
-              setEditValues({ ...editValues, neighborhood: e.target.value })
-            }
+            {...register('neighborhood', { required: true })}
             disabled={edit}
+            error={errors?.neighborhood}
             sx={{ width: "100%", mb: "20px" }}
-            value={editValues.neighborhood}
             label="Bairro"
             variant="filled"
           />
           <ConfirmEditDiv>
-            <DataPicker
-              value={birthdate}
-              edit={edit}
-              setBirthdate={setBirthdate}
-              sx={{ width: "100%" }}
-              birthdate={patient.birthdate}
-            />
+            <Controller
+              name="birthdate"
+              control={control}
+              render={({ field: { ref, ...rest } }) =>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"pt-br"}>
+                  <DesktopDatePicker
+                    label="Birthdate"
+                    disabled={edit}
+                    inputFormat="DD/MM/YYYY"
+                    renderInput={(params) => <TextField {...params} />}
+                    {...rest}
+                  />
+                </LocalizationProvider>
+              }
+            >
+            </Controller>
             <Button
-              onClick={submitEdit}
+              type="submit"
               sx={{ alignSelf: "center" }}
               disabled={edit}
               variant="text"
