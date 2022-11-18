@@ -64,7 +64,6 @@ const EditForm = ({ patient }) => {
   const getPatient = (id) => {
     api.get(`patients/${id}`).then((res) => {
       setSelected(res.data);
-
     });
   };
 
@@ -144,6 +143,7 @@ const EditForm = ({ patient }) => {
             variant="filled"
           />
           <TextField
+            type="email"
             {...register('email', { required: true })}
             error={errors?.email}
             name="email"

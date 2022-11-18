@@ -9,13 +9,12 @@ import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import ToastedSnack from "../components/ToastedSnack";
 import { useState } from "react";
-import FormHelperText from '@mui/material/FormHelperText';
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import api from "../services/api";
 
 const PatientForm = () => {
-  const { register, control, resetField, setValue, watch, getValues, formState: { errors }, handleSubmit } = useForm();
+  const { register, control, resetField, setValue, watch, getValues, formState: { errors }, handleSubmit } = useForm({ defaultValues: { name: '', email: '', city: '', uf: '', street: '', neighborhood: '', number: '' } });
   const [open, setAlert] = useState({ msg: "", type: "success", show: false });
   const [loading, setLoading] = useState(false);
   const watchZipCode = watch('zipCode');
@@ -172,64 +171,64 @@ const PatientForm = () => {
             variant="contained"
           ></LoadingZipButton>
         </ZipDiv>
-        <FormControl>
-          <InputLabel id="uf-label">UF</InputLabel>
-          <Controller
-            name='uf'
-            rules={{ required: true }}
-            control={control}
-            render={({ field: { onChange }, fieldState: { error } }) =>
-              <StyledSelect
-                defaultValue={''}
-                onChange={onChange}
-                error={error}
-                value={watchZipCode}
-                labelId="uf-label"
-                label="UF"
-                id="uf"
-              >
-                {UFs.map((el, index) => {
-                  return (
-                    <MenuItem key={el + index} value={el} >
-                      {el}
-                    </MenuItem>
-                  );
-                })}
-                {error && <FormHelperText>Oi</FormHelperText>}
-              </StyledSelect>
-            }
-          >
-          </Controller>
-        </FormControl>
 
-        <InputTag
-          {...register('city', { required: true })}
-          error={errors?.city}
-          helperText={errors?.city && "Campo Obrigatório"}
-          label='Cidade'
-          variant="outlined"
+        <Controller
+          name="uf"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) =>
+            <FormControl sx={{ width: "100%", marginBottom: '10px' }}>
+              <InputLabel id='uf-label'>UF</InputLabel>
+              <Select {...field} error={errors?.uf} defaultValue="" labelId="uf-label" id="uf" label='UF'>
+                {UFs.map((el, index) =>
+                  <MenuItem key={el + index} value={el}>
+                    <span>{el}</span>
+                  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          }
         />
-        <InputTag
-          {...register('street', { required: true })}
-          error={errors?.street}
-          helperText={errors?.street && "Campo Obrigatório"}
-          label='Logradouro'
-          variant="outlined"
-        />
-        <InputTag
-          {...register('number', { required: true, pattern: /^[0-9]*$/ })}
-          error={errors?.number}
-          helperText={errors?.number && "Somente números"}
-          label='Número'
-          variant="outlined"
-        />
-        <InputTag
-          {...register('neighborhood', { required: true })}
-          error={errors?.neighborhood}
-          helperText={errors?.neighborhood && "Campo Obrigatório"}
-          label='Bairro'
-          variant="outlined"
-        />
+
+        <Controller name='city' rules={{ required: true }} control={control} render={({ field }) =>
+          <InputTag
+            {...field}
+            error={errors?.city}
+            helperText={errors?.city && "Campo Obrigatório"}
+            label='Cidade'
+            variant="outlined"
+          />
+        } />
+
+        <Controller name="street" rules={{ required: true }} control={control} render={({ field }) =>
+          <InputTag
+            {...field}
+            error={errors?.street}
+            helperText={errors?.street && "Campo Obrigatório"}
+            label='Logradouro'
+            variant="outlined"
+          />
+        } />
+
+        <Controller name="number" rules={{ required: true, pattern: /^[0-9]*$/ }} control={control} render={({ field }) =>
+          <InputTag
+            {...field}
+            error={errors?.number}
+            helperText={errors?.number && "Somente números"}
+            label='Número'
+            variant="outlined"
+          />
+        } />
+
+        <Controller name="neighborhood" rules={{ required: true }} control={control} render={({ field }) =>
+          <InputTag
+            {...field}
+            error={errors?.neighborhood}
+            helperText={errors?.neighborhood && "Campo Obrigatório"}
+            label='Bairro'
+            variant="outlined"
+          />
+        } />
 
         <button disabled={loading}>
           {" "}
