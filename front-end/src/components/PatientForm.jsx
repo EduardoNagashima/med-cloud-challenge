@@ -67,7 +67,7 @@ const PatientForm = () => {
             resetField('uf');
             resetField('street');
             resetField('city');
-            resetField('neighborhood');
+            resetField('neighborhoopatientsSagad');
             setAlert({ msg: "CEP Inválido", type: "error", show: true });
             return;
           }

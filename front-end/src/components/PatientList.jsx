@@ -12,6 +12,8 @@ import { Fragment } from "react";
 import * as React from "react";
 import styled from "styled-components";
 
+import { connect } from "react-redux";
+
 export default function PatientList({ patients }) {
   const { setSelected } = React.useContext(SelectedContext);
 
@@ -54,6 +56,10 @@ export default function PatientList({ patients }) {
     </PatientBox>
   );
 }
+
+const mapStateToProps = store => ({
+  newValue: store.selectPatient.newValue
+})
 
 const NameItem = styled(ListItemText)`
   max-width: 30%;
